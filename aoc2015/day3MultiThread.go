@@ -3,6 +3,7 @@ package main
 import (
 	"fmt"
 	"io/ioutil"
+	"sync"
 )
 
 type Worker struct {
@@ -51,17 +52,34 @@ func main() {
 	var santa = newWorkerWithMap("santa", sharedMap)
 	var roboSanta = newWorkerWithMap("robo santa", sharedMap)
 
-	var vectorMap = map[byte]Vector2{byte('<'): {-1, 0}, byte('>'): {1, 0}, byte('^'): {0, 1}, byte('v'): {0, -1}}
-
-	for i, b := range bytes {
-		var vector = vectorMap[b]
-		loneSanta.move(&vector)
-		if i%2 == 0 {
-			santa.move(&vector)
-		} else {
-			roboSanta.move(&vector)
-		}
-	}
+	var wg sync.WaitGroup
+	go loneStart(loneSanta, bytes, &wg)
+	wg.Add(1)
+	go doubleStart(santa, roboSanta, bytes, &wg)
+	wg.Add(1)
+	wg.Wait()
 	fmt.Printf("%d houses visited by %s\n", loneSanta.getTotal(), loneSanta.name)
 	fmt.Printf("%d houses visited by %s and %s\n", len(sharedMap), santa.name, roboSanta.name)
+}
+
+var vectorMap = map[byte]Vector2{byte('<'): {-1, 0}, byte('>'): {1, 0}, byte('^'): {0, 1}, byte('v'): {0, -1}}
+
+func loneStart(w *Worker, bytes []byte, wg *sync.WaitGroup) {
+	defer wg.Done()
+	for _, b := range bytes {
+		var vector = vectorMap[b]
+		w.move(&vector)
+	}
+}
+
+func doubleStart(w *Worker, w2 *Worker, bytes []byte, wg *sync.WaitGroup) {
+	defer wg.Done()
+	for i, b := range bytes {
+		var vector = vectorMap[b]
+		if i%2 == 0 {
+			w.move(&vector)
+		} else {
+			w2.move(&vector)
+		}
+	}
 }
