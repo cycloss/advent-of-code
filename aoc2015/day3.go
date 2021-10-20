@@ -2,24 +2,66 @@ package main
 
 import (
 	"fmt"
-	"internal/cpu"
+	"io/ioutil"
 )
 
-type Person struct {
-	name string
-	age  int
+type Worker struct {
+	name       string
+	visited    map[Vector2]bool
+	currentPos *Vector2
+}
+
+func newWorkerWithMap(name string, m map[Vector2]bool) *Worker {
+	var worker = &Worker{}
+	worker.name = name
+	worker.currentPos = &Vector2{0, 0}
+	worker.visited = m
+	return worker
+}
+
+func newWorker(name string) *Worker {
+	return newWorkerWithMap(name, map[Vector2]bool{Vector2{0, 0}: true})
+}
+
+func (w *Worker) move(v *Vector2) {
+	w.currentPos.add(v)
+	w.visited[*w.currentPos] = true
+}
+
+func (w *Worker) getTotal() int {
+	return len(w.visited)
+}
+
+type Vector2 struct {
+	x int
+	y int
+}
+
+func (v *Vector2) add(v2 *Vector2) {
+	v.x += v2.x
+	v.y += v2.y
 }
 
 func main() {
-	var m = map[Person]bool{}
-	var p1 = Person{"ted", 28}
-	var p2 = Person{"hugo", 27}
-	m[p1] = true
-	m[p2] = true
-	fmt.Println(cpu.Name())
-	var p3 = Person{"ted", 28}
+	var bytes, _ = ioutil.ReadFile("inputs/day3.txt")
 
-	if m[p3] {
-		fmt.Println("Already exists")
+	var loneSanta = newWorker("lone santa")
+
+	var sharedMap = map[Vector2]bool{Vector2{0, 0}: true}
+	var santa = newWorkerWithMap("santa", sharedMap)
+	var roboSanta = newWorkerWithMap("robo santa", sharedMap)
+
+	var vectorMap = map[byte]Vector2{byte('<'): Vector2{-1, 0}, byte('>'): Vector2{1, 0}, byte('^'): Vector2{0, 1}, byte('v'): Vector2{0, -1}}
+
+	for i, b := range bytes {
+		var vector = vectorMap[b]
+		loneSanta.move(&vector)
+		if i%2 == 0 {
+			santa.move(&vector)
+		} else {
+			roboSanta.move(&vector)
+		}
 	}
+	fmt.Printf("%d houses visited by %s\n", loneSanta.getTotal(), loneSanta.name)
+	fmt.Printf("%d houses visited by %s and %s\n", len(sharedMap), santa.name, roboSanta.name)
 }
