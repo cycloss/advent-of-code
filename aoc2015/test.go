@@ -1,12 +1,9 @@
 package main
 
-import (
-	"fmt"
-	"reflect"
-)
+import "fmt"
 
 func main() {
-	var i = 1
-	fmt.Println(^(i << 63))
-	fmt.Println(reflect.TypeOf(i).Size())
+	var m = map[string]bool{"a": true}
+	var p = m["b"]
+	fmt.Printf("%v", p)
 }
