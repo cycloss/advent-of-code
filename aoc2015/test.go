@@ -1,9 +1,12 @@
 package main
 
-import "fmt"
+import (
+	"fmt"
+	"strconv"
+)
 
 func main() {
-	var m = map[string]bool{"a": true}
-	var p = m["b"]
-	fmt.Printf("%v", p)
+
+	var n, _ = strconv.Atoi("100,000")
+	fmt.Println(n)
 }
