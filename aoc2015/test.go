@@ -1,12 +1,8 @@
 package main
 
-import (
-	"fmt"
-	"strconv"
-)
+import "fmt"
 
 func main() {
-
-	var n, _ = strconv.Atoi("100,000")
-	fmt.Println(n)
+	var intMax = (1 << 63) - 1
+	fmt.Println(intMax)
 }
