@@ -3,125 +3,107 @@ package main
 import (
 	"bufio"
 	"fmt"
-	"log"
 	"math"
 	"os"
 	"strconv"
 )
 
-func main() {
+const binLen = 12
 
+func main() {
 	file, err := os.Open("day3/day3.txt")
 	if err != nil {
 		fmt.Println(err)
 		return
 	}
 	defer file.Close()
-	solve(file)
+	var nums = convertFileToInts(file)
+	fmt.Printf("Part 1 Solution: %d\n", solvePart1(nums))
+	fmt.Printf("Part 2 Solution: %d\n", solvePart2(nums))
 }
 
-const binLen = 12
+func convertFileToInts(file *os.File) []int {
 
-func solve(file *os.File) {
 	var buff = bufio.NewScanner(file)
-	var counts = make([]int, binLen, binLen)
-	var binaryList = [][]byte{}
+	var nums = []int{}
 	for buff.Scan() {
 		var line = buff.Text()
-		var binary = []byte(line)
-		updateCounts(binary, counts)
-		binaryList = append(binaryList, binary)
+		var num, _ = strconv.ParseInt(line, 2, 64)
+		nums = append(nums, int(num))
 	}
-	var gamma = calculateGamma(counts)
+	return nums
+}
+
+func solvePart1(nums []int) int {
+	var maskBit = 1
+	var gamma = 0
+	for i := 0; i < binLen; i++ {
+		gamma |= extractMostCommonBit(nums, maskBit)
+		maskBit <<= 1
+	}
 	var epsilon = ^gamma & int(math.Pow(2, binLen)-1)
-	fmt.Println(gamma, epsilon)
-	fmt.Printf("Part 1 Solution: %d\n", gamma*epsilon)
 
-	var oxygen = calculateSupportRating(binaryList, 0, true)
-	var scrubber = calculateSupportRating(binaryList, 0, false)
-	fmt.Printf("Part 2 Solution: %d\n", oxygen*scrubber)
-
+	return gamma * epsilon
 }
 
-func updateCounts(binary []byte, counts []int) {
-	for i, v := range binary {
-		if v == '1' {
-			counts[i]++
-		} else if v == '0' {
-			counts[i]--
-		} else {
-			log.Fatalf("Invalid digit: %v\n", v)
-		}
-	}
-}
-
-func calculateGamma(counts []int) int {
-	var binary = make([]byte, binLen, binLen)
-	for i, v := range counts {
-		if v < 0 {
-			binary[i] = '0'
-		} else if v > 1 {
-			binary[i] = '1'
-		} else {
-			log.Fatalf("0 value detected in count")
-		}
-	}
-	num, err := strconv.ParseInt(string(binary), 2, 64)
-	if err != nil {
-		log.Fatalf("Could not parse %s into an int\n", string(binary))
-	}
-	return int(num)
-}
-
-func calculateSupportRating(bl [][]byte, i int, oxygen bool) int {
-	if len(bl) == 1 {
-		num, err := strconv.ParseInt(string(bl[0]), 2, 64)
-		if err != nil {
-			log.Fatalf("Could not parse %s into an int\n", string(bl[0]))
-		}
-		return int(num)
-	}
-	var bit = getMostCommonBit(bl, i)
-	var bl2 = reduceBinaryList(bl, i, bit, oxygen)
-	return calculateSupportRating(bl2, i+1, oxygen)
-}
-
-func getMostCommonBit(bl [][]byte, i int) byte {
+func extractMostCommonBit(nums []int, maskBit int) int {
 	var count = 0
-	for _, v := range bl {
-		var bit = v[i]
-		if bit == '1' {
+	for _, v := range nums {
+		var bit = v & maskBit
+		if bit > 0 {
 			count++
 		} else {
 			count--
 		}
 	}
-	if count < 0 {
-		return '0'
-	} else if count > 0 {
-		return '1'
+	if count > 0 {
+		return maskBit
+	} else if count < 0 {
+		return 0
 	} else {
-		return 'n'
+		return -1
 	}
 }
 
-func reduceBinaryList(bl [][]byte, i int, mostCommonBit byte, oxygen bool) [][]byte {
-	var bl2 = [][]byte{}
-	for _, v := range bl {
-		var bit = v[i]
-		if oxygen {
-			if bit == mostCommonBit {
-				bl2 = append(bl2, v)
-			} else if mostCommonBit == 'n' && bit == '1' {
-				bl2 = append(bl2, v)
-			}
-		} else {
-			if bit != mostCommonBit && mostCommonBit != 'n' {
-				bl2 = append(bl2, v)
-			} else if mostCommonBit == 'n' && bit == '0' {
-				bl2 = append(bl2, v)
-			}
+func solvePart2(nums []int) int {
+	var oxygenRating = reduceNumbers(nums, 1<<(binLen-1), oxygenFilter)
+	var scrubberRating = reduceNumbers(nums, 1<<(binLen-1), scrubberFilter)
+	return oxygenRating * scrubberRating
+}
+
+/// returns true if the filter is passed
+type filterFunc func(int, int, int) bool
+
+func reduceNumbers(nums []int, mask int, filter filterFunc) int {
+	if len(nums) == 1 {
+		return nums[0]
+	}
+	var commonBit = extractMostCommonBit(nums, mask)
+	var nums2 = []int{}
+	for _, v := range nums {
+		if filter(v, commonBit, mask) {
+			nums2 = append(nums2, v)
 		}
 	}
-	return bl2
+	return reduceNumbers(nums2, mask>>1, filter)
+}
+
+func oxygenFilter(num int, commonBit int, mask int) bool {
+	if commonBit > 0 {
+		return (mask & num) != 0
+	} else if commonBit == 0 {
+		return (mask & num) == 0
+	} else {
+		return (mask & num) != 0
+	}
+}
+
+func scrubberFilter(num int, commonBit int, mask int) bool {
+	if commonBit > 0 {
+		return (mask & num) == 0
+	} else if commonBit == 0 {
+		return (mask & num) != 0
+	} else {
+		return (mask & num) == 0
+	}
 }
