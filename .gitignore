@@ -11,3 +11,5 @@ playground.c
 *.packages
 *.lock
 .dart_tool
+bigboy*.txt
+test.go

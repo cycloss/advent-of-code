@@ -8,10 +8,10 @@ import (
 	"strconv"
 )
 
-const binLen = 12
+const binLen = 40
 
 func main() {
-	file, err := os.Open("day3/day3.txt")
+	file, err := os.Open("day3/bigboyDay3.txt")
 	if err != nil {
 		fmt.Println(err)
 		return
@@ -23,7 +23,6 @@ func main() {
 }
 
 func convertFileToInts(file *os.File) []int {
-
 	var buff = bufio.NewScanner(file)
 	var nums = []int{}
 	for buff.Scan() {
