@@ -76,7 +76,7 @@ func getNextBoard(buff *bufio.Scanner) *board {
 	if len(nums) == 0 {
 		return nil
 	}
-	var grid = make([]bool, len(nums), len(nums))
+	var grid = make([]bool, len(nums))
 	var coords = createCoordinateMap(width, height, nums)
 	return &board{width, height, false, grid, coords}
 }

@@ -5,7 +5,7 @@
 - For the number sequence, an array
 - For the boards, a struct containing:
     - An array for the board itself, containing not numbers, but booleans for if the spot has been marked
-    - A set containing structs that have the number and coordinate on the board
+    - A map containing the board number as key, and the value as its coordinate on the board
 - Also parse in the dimensions of the board, and make them available as globals
 
 ## Algorithm
