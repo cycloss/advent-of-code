@@ -229,7 +229,6 @@ func calculateOutputSum(output []string, segMap map[byte]byte) int {
 	if err != nil {
 		log.Fatal(err, "output", output, "segmap", segMap, "trans", translated)
 	}
-	fmt.Println(res)
 	return res
 }
 
