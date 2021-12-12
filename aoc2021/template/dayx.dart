@@ -1,16 +1,31 @@
 import 'dart:convert';
 import 'dart:io';
 
+import 'parser.dart';
+
 void main() async {
-  Stream<String> lines = File("day9.txt")
+  var lines = await File("day12.txt")
       .openRead()
       .transform(Utf8Decoder())
-      .transform(LineSplitter());
+      .transform(LineSplitter())
+      .toList();
 
-  await for (var line in lines) {
-    print(line);
+  var solution = Solution(lines);
+
+  print("Part 1 Solution: ${solution.part1()}");
+  print("Part 2 Solution: ${solution.part2()}");
+}
+
+class Solution {
+  final List<String> lines;
+  bool allowOneTimeDouble = false;
+  Solution(List<String> lines) : lines = Parser(lines).processLines();
+
+  int part1() {
+    return lines.length;
   }
 
-  print("Part 1 Solution: ${0}");
-  print("Part 2 Solution: ${0}");
+  int part2() {
+    return lines.length;
+  }
 }
