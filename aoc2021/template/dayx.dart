@@ -18,7 +18,6 @@ void main() async {
 
 class Solution {
   final List<String> lines;
-  bool allowOneTimeDouble = false;
   Solution(List<String> lines) : lines = Parser(lines).processLines();
 
   int part1() {
