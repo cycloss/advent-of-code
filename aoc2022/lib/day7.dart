@@ -1,7 +1,5 @@
 import 'dart:io';
 
-var allTotal = 0;
-
 // File system node
 class FSNode {
   // size is current size of dir
@@ -15,28 +13,16 @@ class FSNode {
 
   FSNode(this.name, this.size, this.parentNode);
 
+  bool get isDirectory => size == 0;
+
   int totalSize() {
-    var total = size;
+    if (!isDirectory) {
+      return size;
+    }
+    var total = 0;
     for (var child in children) {
       var childTotal = child.totalSize();
       total += childTotal;
-    }
-    return total;
-  }
-
-  int childNodeForAtMost(int bytes) {
-    if (children.isEmpty) {
-      // if file
-      return size;
-    }
-    // directory
-    var total = 0;
-    for (var child in children) {
-      var childTotal = child.childNodeForAtMost(bytes);
-      total += childTotal;
-    }
-    if (total <= bytes) {
-      allTotal += total;
     }
     return total;
   }
@@ -52,43 +38,20 @@ class FSTraverser {
   late FSNode headNode;
   late FSNode currentNode;
 
-  FSTraverser(this.lines);
+  FSTraverser(this.lines) {
+    buildDirTree();
+  }
 
   String get currentLine => lines[currentLineNo];
   List<String> get currentLineTokens => currentLine.split(" ");
   bool get currentLineIsCommand => currentLineTokens[0] == "\$";
 
-  int bytes = 0;
-
-  void findDirectoriesOfAtMost(int bytes) {
-    this.bytes = bytes;
-    currentLineNo = 0;
-    buildDirTree();
-    // headNode.childNodeForAtMost(bytes);
-    var smallDirsTotal = findSmallDirsTotal(headNode);
-    print(smallDirsTotal);
-  }
+  int totalUnderMaxBytes = 0;
 
   void buildDirTree() {
     while (currentLineNo < lines.length) {
       consumeCommand();
     }
-  }
-
-  int findSmallDirsTotal(FSNode node) {
-    // only visit directories
-    if (node.children.isEmpty) {
-      return 0;
-    }
-    var nodeSize = node.totalSize();
-    if (nodeSize <= bytes) {
-      return nodeSize;
-    }
-    var total = 0;
-    for (var childNode in node.children) {
-      total += findSmallDirsTotal(childNode);
-    }
-    return total;
   }
 
   // after a consume command, the currentLine will be the next one processed
@@ -140,6 +103,46 @@ class FSTraverser {
       }
     }
   }
+
+  void findDirectoriesOfAtMost(int maxBytes) {
+    findSmallSubDirs(headNode, maxBytes);
+    print('Total of dirs under $maxBytes: $totalUnderMaxBytes');
+  }
+
+  void findSmallSubDirs(FSNode node, int maxBytes) {
+    if (!node.isDirectory) {
+      return;
+    }
+    for (var child in node.children) {
+      findSmallSubDirs(child, maxBytes);
+    }
+    var nodeSize = node.totalSize();
+    if (nodeSize <= maxBytes) {
+      totalUnderMaxBytes += nodeSize;
+    }
+  }
+
+  int currentSmallest = 999999999;
+
+  void findDirToDeleteToFreeSpace() {
+    var rootDirSize = headNode.totalSize();
+    var spaceToFree = 30000000 - (70000000 - rootDirSize);
+    findSmallDirToFreeSpace(headNode, spaceToFree);
+    print('Smallest dir to free up $spaceToFree: $currentSmallest');
+  }
+
+  void findSmallDirToFreeSpace(FSNode node, int spaceToFree) {
+    if (!node.isDirectory) {
+      return;
+    }
+    for (var child in node.children) {
+      findSmallDirToFreeSpace(child, spaceToFree);
+    }
+    var nodeSize = node.totalSize();
+    if (nodeSize >= spaceToFree && nodeSize < currentSmallest) {
+      currentSmallest = nodeSize;
+    }
+  }
 }
 
 Future<void> day7() async {
@@ -148,4 +151,5 @@ Future<void> day7() async {
   // as going back up, keep a total of the size of dirs you have visited in the top node
   var traverser = FSTraverser(lines);
   traverser.findDirectoriesOfAtMost(100000);
+  traverser.findDirToDeleteToFreeSpace();
 }
