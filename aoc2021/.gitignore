@@ -1,0 +1,15 @@
+# ignores all files without extensions that are not Makefile
+*
+!*.*
+!*/
+!Makefile
+!LICENSE
+.vscode/*
+.DS_Store
+*.dSYM
+playground.c
+*.packages
+*.lock
+.dart_tool
+bigboy*.txt
+test.go
