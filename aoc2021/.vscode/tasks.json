@@ -4,7 +4,7 @@
         {
             "label": "AoC build all go files",
             // binary has same name as current folder
-            "command": "go build -o ${relativeFileDirname}/${relativeFileDirname} ${relativeFileDirname}/*.go", // Could be any other shell command
+            "command": "go build -gcflags=\"all=-N -l\" -o ${relativeFileDirname}/${relativeFileDirname} ${relativeFileDirname}/*.go", // Could be any other shell command
             "type": "shell",
             "presentation": {
                 "reveal": "silent", // prevents the press any key to reuse from appearing
