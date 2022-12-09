@@ -1,6 +1,7 @@
 import 'package:aoc2022/day6.dart';
 import 'package:aoc2022/day7.dart';
 import 'package:aoc2022/day8.dart';
+import 'package:aoc2022/day9.dart';
 import 'package:test/test.dart';
 
 void main() {
@@ -11,4 +12,5 @@ void main() {
     await day7();
   });
   test('day8', () => day8());
+  test('day9', () => day9());
 }
