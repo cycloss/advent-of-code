@@ -1,3 +1,5 @@
+import 'dart:collection';
+
 class Tuple<T, U> {
   T x;
   U y;
@@ -28,4 +30,36 @@ class Vector2 extends Tuple<int, int> {
     "L": Vector2(-1, 0),
     "R": Vector2(1, 0),
   };
+}
+
+class Stack<T> extends ListQueue<T> {
+  void pushAll(Iterable<T> v) {
+    addAll(v);
+  }
+
+  List<T> popCount(int count) {
+    var out = <T>[];
+    for (var i = 0; i < count; i++) {
+      if (isNotEmpty) {
+        out.insert(0, removeLast());
+      }
+    }
+    return out;
+  }
+
+  void push(T v) => add(v);
+
+  T pop() => removeLast();
+}
+
+class TreeNode<T> {
+  T value;
+
+  TreeNode(this.value);
+
+  List<TreeNode<T>> children = [];
+
+  void add(TreeNode<T> child) {
+    children.add(child);
+  }
 }
