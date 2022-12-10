@@ -23,20 +23,38 @@ func Day10() {
 	// how many cycles have been expended
 	curCycle := 0
 	x := 1
+	spriteWidth := 3
 	totalSigStrength := 0
 	for _, in := range ins {
-		// fmt.Printf("%+v\n", in)
 		for c := in.cycles; c > 0; c-- {
+			renderPos := curCycle % 40
+			found := false
+			for i := 0; i < spriteWidth; i++ {
+				var spritePixel = x + i - (spriteWidth / 2)
+				if renderPos == spritePixel {
+					fmt.Print("#")
+					found = true
+					// break as have printed for current render pos
+					break
+				}
+			}
+			if !found {
+				fmt.Print(".")
+			}
 
 			curCycle++
 			if (curCycle-20)%40 == 0 {
 				// out of cycles for current block
-				fmt.Printf("current cycle: %d, x register: %d\n", curCycle, x)
+				// fmt.Printf("current cycle: %d, x register: %d\n", curCycle, x)
+				// print new line of row
 				totalSigStrength += x * curCycle
+			}
+			if (curCycle % 40) == 0 {
+				fmt.Println("")
 			}
 		}
 		// only after the last cycle has finished should the op be applied
-		// as the question is about during cycle
+		// (and sprite moved) as the question is about during cycle
 		switch in.name {
 		case "addx":
 			x += in.value

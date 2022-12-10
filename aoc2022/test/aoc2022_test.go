@@ -23,12 +23,8 @@ func init() {
 	}
 }
 
-func TestTemplate(t *testing.T) {
-	lib.Template()
-}
-
 func TestPlayground(t *testing.T) {
-	fmt.Println("hello world")
+	fmt.Println(3 / 2)
 }
 
 func TestDay10(t *testing.T) {
