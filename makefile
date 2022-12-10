@@ -8,10 +8,10 @@ help: ## Show this help
 	awk 'BEGIN {FS = ":.*?## "}; {printf "%-30s %s\n", $$1, $$2}'
 
 go: ## Run an Advent of Code solution written in go 
-	@cd aoc${year} && go run "bin/aoc${year}.go"
+	@cd ${year} && go run "bin/${year}.go"
 
 dart: ## Run an Advent of Code solution written in dart
-	@cd aoc${year} && dart run "bin/aoc${year}.dart" ${day}
+	@cd ${year} && dart run "bin/${year}.dart" ${day}
 
 usage: ## Print the usage instructions for running this makefile
 	@echo "Select a target for make depending on the implementation language of the solution."	
