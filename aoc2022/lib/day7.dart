@@ -106,6 +106,7 @@ class FSTraverser {
 
   void findDirectoriesOfAtMost(int maxBytes) {
     findSmallSubDirs(headNode, maxBytes);
+    print("Part 1:");
     print('Total of dirs under $maxBytes: $totalUnderMaxBytes');
   }
 
@@ -128,6 +129,7 @@ class FSTraverser {
     var rootDirSize = headNode.totalSize();
     var spaceToFree = 30000000 - (70000000 - rootDirSize);
     findSmallDirToFreeSpace(headNode, spaceToFree);
+    print("Part 2:");
     print('Smallest dir to free up $spaceToFree: $currentSmallest');
   }
 
@@ -145,8 +147,8 @@ class FSTraverser {
   }
 }
 
-Future<void> day7() async {
-  var lines = await File("inputs/day7").readAsLines();
+void day7() {
+  var lines = File("inputs/day7").readAsLinesSync();
   // use a doubly linked list to traverse the structure and create a tree
   // as going back up, keep a total of the size of dirs you have visited in the top node
   var traverser = FSTraverser(lines);

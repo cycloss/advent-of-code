@@ -30,10 +30,12 @@ void day8() {
 
   findVisibleTrees(grid);
   // printGrid(grid);
+  print("Part 1:");
   countVisibleTrees(grid);
 
   findScenicScores(grid);
 
+  print("Part 2:");
   findMaxScenicScore(grid);
 }
 

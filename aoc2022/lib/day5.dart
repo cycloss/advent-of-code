@@ -26,13 +26,14 @@ class CrateGame {
   }
 
   void printTopCrates() {
-    crateStacks.forEach((stack) {
+    for (var stack in crateStacks) {
       if (stack.isNotEmpty) {
-        print(stack.last);
+        stdout.write(stack.last);
       } else {
         print(" ");
       }
-    });
+    }
+    print("");
   }
 }
 
@@ -60,8 +61,8 @@ class Stack extends ListQueue<String> {
   }
 }
 
-Future<void> day5() async {
-  var lines = await File("inputs/day5").readAsLines();
+void day5() async {
+  var lines = File("inputs/day5").readAsLinesSync();
   // first 8 lines parse 9 crate stacks
   var stacks1 = parseInitialCrateStacks(lines.sublist(0, 8), false);
   var stacks2 = parseInitialCrateStacks(lines.sublist(0, 8), true);
@@ -73,9 +74,9 @@ Future<void> day5() async {
     cg2.apply(instruction);
     cg1.apply(instruction);
   }
-  print("part 1:");
+  print("Part 1:");
   cg1.printTopCrates();
-  print("part 2:");
+  print("Part 2:");
   cg2.printTopCrates();
 }
 

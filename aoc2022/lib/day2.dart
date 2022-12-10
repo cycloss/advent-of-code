@@ -1,4 +1,3 @@
-import 'dart:convert';
 import 'dart:io';
 
 enum Outcome { win, loose, draw }
@@ -35,17 +34,14 @@ final rockMap2 = {Outcome.draw: "R", Outcome.loose: "S", Outcome.win: "P"};
 final paperMap2 = {Outcome.draw: "P", Outcome.loose: "R", Outcome.win: "S"};
 final scissorsMap2 = {Outcome.draw: "S", Outcome.loose: "P", Outcome.win: "R"};
 
-void main() async {
-  Stream<String> lines = File("inputs/day2")
-      .openRead()
-      .transform(Utf8Decoder())
-      .transform(LineSplitter());
+void day2() {
+  var lines = File("inputs/day2").readAsLinesSync();
 
   // 0 lost, 3 draw, 6 win
   var totalScorePart1 = 0;
   var totalScorePart2 = 0;
 
-  await for (var line in lines) {
+  for (var line in lines) {
     var commands = line.split(" ");
     var p1Choice = translationMap[commands[0]];
     // part1
@@ -68,5 +64,6 @@ void main() async {
     var p2ChoiceScore2 = choiceScoreMap[p2Choice2]!;
     totalScorePart2 += p2ChoiceScore2;
   }
-  print("part1: $totalScorePart1, part2: $totalScorePart2");
+  print("Part 1: $totalScorePart1");
+  print("Part 2: $totalScorePart2");
 }

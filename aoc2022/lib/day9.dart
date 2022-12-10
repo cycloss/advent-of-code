@@ -28,7 +28,9 @@ class Point extends Tuple<int, int> {
 
 void day9() {
   var lines = File("inputs/day9").readAsLinesSync();
+  print("Part 1:");
   calculateTailPath(2, lines);
+  print("Part 2:");
   calculateTailPath(10, lines);
 }
 

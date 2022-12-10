@@ -1,12 +1,8 @@
-import 'dart:convert';
 import 'dart:io';
 
-void main() async {
-  var lines = await File("inputs/day3")
-      .openRead()
-      .transform(Utf8Decoder())
-      .transform(LineSplitter())
-      .toList();
+void day3() {
+  var lines = File("inputs/day3").readAsLinesSync();
+
   var totalScore1 = 0;
   for (var line in lines) {
     var chars = line.split("");
@@ -16,7 +12,7 @@ void main() async {
     var common = section1.toSet().intersection(section2.toSet()).first;
     totalScore1 += getPriorityScore(common);
   }
-  print(totalScore1);
+  print("Part 1: $totalScore1");
 
   var totalScore2 = 0;
   var bags = <Set<String>>[];
@@ -28,7 +24,7 @@ void main() async {
       totalScore2 += getPriorityScore(common);
     }
   }
-  print(totalScore2);
+  print("Part 2: $totalScore2");
 }
 
 int getPriorityScore(String char) {

@@ -17,8 +17,9 @@ class Tuple {
   }
 }
 
-void main() async {
-  var lines = await File("inputs/day4").readAsLines();
+void day4() {
+  var lines = File("inputs/day4").readAsLinesSync();
+
   var containsEntirelyCount = 0;
   var containsAnyOfCount = 0;
   for (var line in lines) {
@@ -32,11 +33,11 @@ void main() async {
       containsAnyOfCount++;
     }
   }
-  print(containsEntirelyCount);
-  print(containsAnyOfCount);
+
+  print("Part 1: $containsEntirelyCount");
+  print("Part 2: $containsAnyOfCount");
 }
 
-// TODO(Ted): move to class as factory
 Tuple tupleFromSectionPair(String sectionPair) {
   var sections = sectionPair.split("-");
   return Tuple(int.parse(sections[0]), int.parse(sections[1]));

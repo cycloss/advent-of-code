@@ -1,11 +1,13 @@
 import 'dart:io';
 
-Future<void> day6() async {
+void day6() {
   // detect start of packet marker
   // start of packet is sequence of 4 chars that are different
   // how many chars to process before first start of packet marker detected?
-  var data = (await File("inputs/day6").readAsLines())[0].split("");
+  var data = File("inputs/day6").readAsLinesSync()[0].split("");
+  print("Part 1:");
   findMarker(data, 4);
+  print("Part 2:");
   findMarker(data, 14);
 }
 
